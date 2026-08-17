@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import norm
 
 def asian_crude(S0, K, r, sigma, T, M, N, seed = 42):
     """Prices an Arithmetic Asian Call Option using vectorized Crude Monte Carlo."""
@@ -45,6 +46,20 @@ def asian_anti(S0, K, r, sigma, T, M, N, seed = 42):
     
     return price, err
 
+def geom_asian(S0, K, r, sigma, T, M):
+    """Calculates exact analytical price E[X] for discrete Geometric Asian Call."""
+    sigma_G = sigma * np.sqrt((M + 1)*(2*M + 1)/(6 * M ** 2)) # Adjusted volatility
+    mu_G = sigma_G**2/2 + (r - sigma**2/2)/2 * (M + 1)/ M # Adjusted growth rate
+    
+    x = sigma_G*np.sqrt(T) # Denominator
+    d1 = (np.log(S0/K) + (mu_G + sigma_G**2/2)*T) / x
+    d2 = d1 - x
+    N_d1 = norm.cdf(d1)
+    N_d2 = norm.cdf(d2)
+    
+    # Calculate E[X]
+    E_X = np.exp(-r*T) * (S0 * np.exp(mu_G * T) * N_d1 - K * N_d2)
+    return E_X
 
     
     
