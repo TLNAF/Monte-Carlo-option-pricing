@@ -83,9 +83,9 @@ The implementation uses vectorized NumPy operations for efficient path generatio
 
 ## 5. Results
 
-| Method | Estimated Price | Standard Error |
-|---|---:|---:|
-| Crude Monte Carlo | 5.7495 | 0.0565 |
-| Antithetic Variates | 5.7940 | 0.0394 |
+| Method | Estimated Price | Standard Error | Variance Ratio |
+|---|---:|---:|---:|
+| Crude Monte Carlo | 5.7495 | 0.0565 | 1.00x |
+| Antithetic Variates | 5.7940 | 0.0394 | 2.06x |
 
 The antithetic variate method achieves a lower standard error, demonstrating improved simulation efficiency through variance reduction.
