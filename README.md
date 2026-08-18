@@ -15,46 +15,35 @@ The goal is to investigate how variance reduction techniques improve the efficie
 
 The underlying asset follows a Geometric Brownian Motion:
 
-$$
-dS_t = rS_tdt+\sigma S_tdW_t
-$$
+$$dS_t = rS_tdt+\sigma S_tdW_t$$
 
 The discretized simulation is:
 
-$$
-S_{t+\Delta t}=S_t\exp\left((r-\frac12\sigma^2)\Delta t+\sigma\sqrt{\Delta t}Z\right)
-$$
+$$S_{t+\Delta t}=S_t\exp\left((r-\frac12\sigma^2)\Delta t+\sigma\sqrt{\Delta t}Z\right)$$
 
 where $Z\sim N(0,1)$.
 
 The arithmetic Asian call payoff is:
 
-$$
-\max\left(\frac{1}{M}\sum_{i=1}^{M}S_{t_i}-K,0\right)
-$$
+$$\max\left(\frac{1}{M}\sum_{i=1}^{M}S_{t_i}-K,0\right)$$
 
 The option price is estimated by discounting the average simulated payoff:
 
-$$
-\hat{V}=e^{-rT}\frac{1}{N}\sum_{i=1}^{N}Payoff_i
-$$
+$$\hat{V}=e^{-rT}\frac{1}{N}\sum_{i=1}^{N}Payoff_i$$
 
 ## 3. Monte Carlo Methods
 
 ### Crude Monte Carlo
 
 Independent paths are simulated and their discounted payoffs are averaged. The standard error is estimated as:
-$$
-SE=\frac{s}{\sqrt{N}}
-$$
+
+$$SE=\frac{s}{\sqrt{N}}$$
 
 ### Antithetic Variates
 
 For each random vector $Z$, an additional path is generated using $-Z$. The two discounted payoffs are averaged:
 
-$$
-W_i=\frac{1}{2}(X_i^+ + X_i^-)
-$$
+$$W_i=\frac{1}{2}(X_i^+ + X_i^-)$$
 
 This creates negatively correlated simulations and reduces estimator variance.
 
@@ -62,31 +51,24 @@ This creates negatively correlated simulations and reduces estimator variance.
 
 The discounted payoff of a geometric Asian option is used as a control variate because its expected value has a closed-form solution.
 
-Let \(Y\) be the arithmetic Asian payoff and \(X\) the geometric Asian payoff. The adjusted estimator is:
+Let $Y$ be the arithmetic Asian payoff and $X$ the geometric Asian payoff. The adjusted estimator is:
 
-\[
-Y_{CV}=Y-c^*(X-E[X])
-\]
+$$Y_{CV}=Y-c^*(X-E[X])$$
 
 where the optimal coefficient is estimated by:
 
-\[
-c^*=\frac{\operatorname{Cov}(Y,X)}{\operatorname{Var}(X)}
-\]
+
+$$c^*=\frac{\operatorname{Cov}(Y,X)}{\operatorname{Var}(X)}$$
 
 ## 4. Implementation
 
 Parameters:
 
-$$
-S_0=100,\quad K=100,\quad r=0.05,\quad \sigma=0.2,\quad T=1
-$$
+$$S_0=100,\quad K=100,\quad r=0.05,\quad \sigma=0.2,\quad T=1$$
 
 with daily monitoring:
 
-$$
-M=252
-$$
+$$M=252$$
 
 For a fair comparison, each method uses a total of 20,000 simulated paths:
 
