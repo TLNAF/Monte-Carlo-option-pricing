@@ -44,18 +44,13 @@ $$
 ### Crude Monte Carlo
 
 Independent paths are simulated and their discounted payoffs are averaged. The standard error is estimated as:
-
 $$
 SE=\frac{s}{\sqrt{N}}
 $$
 
 ### Antithetic Variates
 
-<<<<<<< HEAD
 For each random vector $Z$, an additional path is generated using $-Z$. The two discounted payoffs are averaged:
-=======
-For each random vector \(Z\), a second path is generated using \(-Z\). The two discounted payoffs are averaged:
->>>>>>> 009c47a (Implemented geometric control variate and benchmarked results)
 
 $$
 W_i=\frac{1}{2}(X_i^+ + X_i^-)
