@@ -1,17 +1,15 @@
-# Monte-Carlo-option-pricing
-Python implementation of Asian option pricing using Geometric Brownian Motion and Monte Carlo simulation.
-
 # Monte Carlo Pricing of an Arithmetic Asian Call Option
 
 ## 1. Introduction
 
 Asian options are path-dependent derivatives whose payoff depends on the average price of the underlying asset over time. Since arithmetic Asian options generally do not have closed-form solutions, Monte Carlo simulation is commonly used for pricing.
 
-This project implements two Monte Carlo approaches:
+This project implements and compares three approaches:
 - Crude Monte Carlo simulation
 - Antithetic variate variance reduction
+- Control variate variance reduction using a geometric Asian option
 
-The goal is to compare their pricing accuracy and efficiency.
+The goal is to investigate how variance reduction techniques improve the efficiency of Monte Carlo pricing.
 
 ## 2. Model
 
@@ -45,7 +43,7 @@ $$
 
 ### Crude Monte Carlo
 
-Independent random paths are generated and the discounted payoffs are averaged. The standard error is estimated as:
+Independent paths are simulated and their discounted payoffs are averaged. The standard error is estimated as:
 
 $$
 SE=\frac{s}{\sqrt{N}}
@@ -53,13 +51,33 @@ $$
 
 ### Antithetic Variates
 
+<<<<<<< HEAD
 For each random vector $Z$, an additional path is generated using $-Z$. The two discounted payoffs are averaged:
+=======
+For each random vector \(Z\), a second path is generated using \(-Z\). The two discounted payoffs are averaged:
+>>>>>>> 009c47a (Implemented geometric control variate and benchmarked results)
 
 $$
 W_i=\frac{1}{2}(X_i^+ + X_i^-)
 $$
 
-This introduces negative correlation between simulations and reduces variance.
+This creates negatively correlated simulations and reduces estimator variance.
+
+### Control Variates
+
+The discounted payoff of a geometric Asian option is used as a control variate because its expected value has a closed-form solution.
+
+Let \(Y\) be the arithmetic Asian payoff and \(X\) the geometric Asian payoff. The adjusted estimator is:
+
+\[
+Y_{CV}=Y-c^*(X-E[X])
+\]
+
+where the optimal coefficient is estimated by:
+
+\[
+c^*=\frac{\operatorname{Cov}(Y,X)}{\operatorname{Var}(X)}
+\]
 
 ## 4. Implementation
 
@@ -75,17 +93,22 @@ $$
 M=252
 $$
 
-Simulation size:
+For a fair comparison, each method uses a total of 20,000 simulated paths:
+
 - Crude Monte Carlo: 20,000 paths
 - Antithetic Variates: 10,000 antithetic pairs
+- Control Variates: 20,000 paths
 
 The implementation uses vectorized NumPy operations for efficient path generation.
 
 ## 5. Results
 
-| Method | Estimated Price | Standard Error | Variance Ratio |
+| Method | Estimated Price | Standard Error | Variance Reduction |
 |---|---:|---:|---:|
 | Crude Monte Carlo | 5.7495 | 0.0565 | 1.00x |
 | Antithetic Variates | 5.7940 | 0.0394 | 2.06x |
+| Control Variates | 5.7805 | 0.0015 | 1353.80x |
 
-The antithetic variate method achieves a lower standard error, demonstrating improved simulation efficiency through variance reduction.
+The antithetic variate method reduces the standard error by approximately 30% relative to crude Monte Carlo.
+
+The control variate method produces a much larger reduction in estimator variance, benefiting from the strong relationship between arithmetic and geometric Asian option payoffs.

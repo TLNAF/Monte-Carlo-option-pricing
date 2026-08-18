@@ -61,6 +61,32 @@ def geom_asian(S0, K, r, sigma, T, M):
     E_X = np.exp(-r*T) * (S0 * np.exp(mu_G * T) * N_d1 - K * N_d2)
     return E_X
 
+def asian_control(S0, K, r, sigma, T, M, N, seed = 42):
+    np.random.seed(seed)
+    dt = T/M
+    Z = np.random.standard_normal((N, M))
+    drift = (r - sigma**2/2) * dt
+    diffusion = sigma * np.sqrt(dt) * Z
+    log_S = np.log(S0) + np.cumsum(drift + diffusion, axis = 1)
+    S = np.exp(log_S)
+    
+    arith_mean = np.mean(S, axis = 1)
+    Y = np.exp(-r*T) * np.maximum(arith_mean - K, 0.0) # Arithmetic payoff Y_i
+    geom_mean = np.exp(np.mean(log_S, axis = 1))
+    X = np.exp(-r*T) * np.maximum(geom_mean - K, 0.0) # Geometric payoff X_i
+    
+    E_X = geom_asian(S0, K, r, sigma, T, M) # Expected value of X
+    cov_mat = np.cov(Y, X, ddof = 1)
+    cov_YX = cov_mat[0, 1]
+    var_X = cov_mat[1, 1]
+    c_star = cov_YX / var_X
+    
+    Y_CV = Y - c_star * (X - E_X) # Adjusted payoff
+    price = np.mean(Y_CV)
+    err = np.std(Y_CV, ddof = 1) / np.sqrt(N)
+    return price, err
+    
+    
     
     
     
