@@ -58,7 +58,7 @@ $$Y_{CV}=Y-c^*(X-E[X])$$
 where the optimal coefficient is estimated by:
 
 
-$$c^*=\frac{\operatorname{Cov}(Y,X)}{\operatorname{Var}(X)}$$
+$$c^* = \frac{\text{Cov}(Y,X)}{\text{Var}(X)}$$
 
 ## 4. Implementation
 
